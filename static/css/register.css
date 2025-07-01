@@ -1,0 +1,340 @@
+:root {
+    --gold: #FFD700;
+    --dark-gold: #D4AF37;
+    --black: #000000;
+    --gray-1: rgba(15, 15, 15, 0.8);
+    --gray-2: #181818;
+    --gray-3: #222222;
+    --gray-4: #2A2A2A;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--black);
+    color: white;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative;
+}
+
+/* Анимированный фон с эффектом прожектора */
+.spotlight-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at var(--x) var(--y),
+        rgba(255, 215, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.95) 70%
+    );
+    z-index: -1;
+    transition: all 0.3s linear;
+}
+
+.registration-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    z-index: 1;
+}
+
+.registration-form {
+    background-color: var(--gray-1);
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.registration-form:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.registration-form h2 {
+    color: white;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: textGlow 3s infinite alternate;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.registration-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #aaa;
+    transition: all 0.3s ease;
+    transform-origin: left center;
+}
+
+.registration-form input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    transition: all 0.4s ease;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.registration-form input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    transform: scale(1.02);
+}
+
+.registration-form button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--gold);
+    color: var(--black);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 1rem;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.registration-form button[type="submit"]:hover {
+    background-color: var(--dark-gold);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
+}
+
+.registration-form button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: all 0.6s ease;
+}
+
+.registration-form button[type="submit"]:hover::after {
+    left: 100%;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1) rotate(-10deg);
+}
+
+.password-requirements {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: none;
+    animation: shake 0.5s ease;
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    100% {
+        text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-3px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.registration-form {
+    animation: fadeInUp 0.8s ease forwards, float 6s ease-in-out infinite;
+}
+
+/* Эффект частиц */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    background-color: rgba(255, 215, 0, 0.6);
+    border-radius: 50%;
+    animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(20px);
+        opacity: 0;
+    }
+}
+.error {
+    color: #ff3333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.accept-text {
+    margin-right: 6px;
+    color: white;
+    text-decoration: none;
+    cursor: default;
+}
+
+.white-text {
+    color: white;
+    text-decoration: none;
+    cursor: default;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0px;
+    height: 0px;
+    border: 2px solid #ffd900b4;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 10px;
+    position: relative;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked {
+    background-color: #FFD700;
+
+}
+
+.agreement-checkbox input[type="checkbox"]:checked::after {
+    position: absolute;
+    color: #000;
+    font-size: 7px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.terms-link {
+    color: #D4AF37;
+    text-decoration: none;
+}
+
+.terms-link:hover {
+    text-decoration: underline;
+}
+
+#agreementError {
+    display: none;
+    color: #ff0000;
+    font-size: 12px;
+    margin-top: 5px;
+}

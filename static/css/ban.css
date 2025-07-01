@@ -1,0 +1,202 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+body {
+    background-color: #000;
+    color: #FFD700;
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Звездный фон */
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background-color: #FFD700;
+    border-radius: 50%;
+    animation: twinkle var(--duration) infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
+
+.error-container {
+    border: 2px solid #FFD700;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 800px;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.error-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        transparent,
+        transparent,
+        transparent,
+        #FFD700,
+        transparent,
+        transparent,
+        transparent
+    );
+    transform: rotate(30deg);
+    animation: shine 6s linear infinite;
+    opacity: 0.1;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+}
+
+h1 {
+    font-size: 3.5em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+p {
+    font-size: 2.2em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.warning-icon {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #FFD700;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.glitch {
+    position: relative;
+}
+
+.glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch::before {
+    color: #0ff;
+    z-index: -1;
+    animation: glitch-effect 3s infinite;
+}
+
+.glitch::after {
+    color: #f0f;
+    z-index: -2;
+    animation: glitch-effect 2s infinite reverse;
+}
+
+@keyframes glitch-effect {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(-3px, -3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
+}
+
+.contact-btn {
+    background: transparent;
+    color: #FFD700;
+    border: 2px solid #FFD700;
+    padding: 10px 25px;
+    font-size: 1.2em;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.contact-btn:hover {
+    background: #FFD700;
+    color: #000;
+    box-shadow: 0 0 15px #FFD700;
+}
+
+.contact-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.contact-btn:hover::before {
+    left: 100%;
+}
+
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(255, 215, 0, 0.05) 0.5%,
+        transparent 1%
+    );
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABOSURBVGhD7cExAQAwDMCg+zfd2VAp4A8k1pJkZmb2v5GZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZ2Qv7AckfDkQ0Q73MAAAAAElFTkSuQmCC');
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1001;
+}

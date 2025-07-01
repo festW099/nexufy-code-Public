@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/admin.css">
+</head>
+<body>
+    {% if not session.get('admin_logged_in') %}
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="hexagon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="login-title gold-text">Admin Panel</div>
+            </div>
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+            <form method="POST" action="/admin/login">
+                <div class="form-group">
+                    <label for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="admin-container">
+        <!-- Сайдбар -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo"></div>
+                <div class="sidebar-title gold-text">ADMIN</div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item {% if request.path == '/admin' %}active{% endif %}">
+                    <a href="/admin">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Панель управления</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.path == '/admin/static' %}active{% endif %}">
+                    <a href="/admin/static">
+                        <i class="fas fa-users"></i>
+                        <span>Пользователи</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.path == '/admin/content' %}active{% endif %}">
+                    <a href="/admin/content">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Контент</span>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.path == '/admin/setting' %}active{% endif %}">
+                    <a href="/admin/setting">
+                        <i class="fas fa-cog"></i>
+                        <span>Настройки</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/analys">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Аналитика</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/message">
+                        <i class="fas fa-envelope"></i>
+                        <span>Сообщения</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Выйти</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        {% block content %}{% endblock %}
+        
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+
+{% block title %}NEXUFY CODE | FAQ{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUFY CODE | FAQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+:root {
+    --gold: #FFD700;
+    --dark-gold: #D4AF37;
+    --black: #000000;
+    --gray-1: #0F0F0F;
+    --gray-2: #181818;
+    --gray-3: #222222;
+    --gray-4: #2A2A2A;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--black);
+    color: white;
+    overflow-x: hidden;
+}
+
+.gold-text {
+    color: var(--gold);
+}
+
+.gold-bg {
+    background-color: var(--gold);
+}
+
+.gold-border {
+    border-color: var(--gold);
+}
+
+.faq-item {
+    border-bottom: 1px solid var(--gray-3);
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    background-color: var(--gray-2);
+}
+
+.faq-question {
+    position: relative;
+    padding-right: 40px;
+}
+
+.faq-question:after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.faq-item.active .faq-question:after {
+    content: '-';
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+}
+
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.hexagon {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    transition: all 0.3s ease;
+}
+
+.hexagon:hover {
+    transform: rotate(10deg) scale(1.1);
+}
+
+.btn-gold {
+    background: var(--gold);
+    color: var(--black);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.section-title {
+    position: relative;
+    display: inline-block;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50%;
+    height: 4px;
+    background-color: var(--gold);
+}
+
+.gold-text {
+color: var(--gold);
+}
+
+.gold-bg {
+background-color: var(--gold);
+}
+
+.gold-border {
+border-color: var(--gold);
+}
+
+.btn-gold {
+background: var(--gold);
+color: var(--black);
+font-weight: 600;
+transition: all 0.3s ease;
+clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+}
+
+.btn-gold:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-outline {
+border: 2px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+background: rgba(255, 215, 0, 0.1);
+}
+
+.card {
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transition: all 0.3s ease;
+border-left: 4px solid var(--gold);
+transform: translateY(20px);
+opacity: 0;
+animation: fadeInUp 0.6s ease forwards;
+}
+
+.card:hover {
+transform: translateY(-8px) !important;
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.nav-link {
+position: relative;
+padding: 8px 0;
+}
+
+.nav-link:after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 0;
+height: 2px;
+background-color: var(--gold);
+transition: width 0.3s ease;
+}
+
+.nav-link:hover:after {
+width: 100%;
+}
+
+.active-nav:after {
+width: 100%;
+}
+
+.stat-card {
+border-bottom: 4px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transform: scale(0.95);
+transition: all 0.3s ease;
+opacity: 0;
+animation: fadeInScale 0.6s ease forwards;
+}
+
+.stat-card:hover {
+transform: scale(1.05) !important;
+}
+
+.tournament-card {
+border-top: 4px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transform: translateY(20px);
+opacity: 0;
+animation: fadeInUp 0.6s ease forwards;
+}
+
+.feature-icon {
+transition: all 0.3s ease;
+}
+
+.feature-icon:hover {
+transform: rotateY(180deg);
+}
+
+.tournament-card:hover {
+transform: translateY(-8px) !important;
+}
+
+.hexagon {
+clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+transition: all 0.3s ease;
+}
+
+.hexagon:hover {
+transform: rotate(10deg) scale(1.1);
+}
+
+.section-title {
+position: relative;
+display: inline-block;
+}
+
+.section-title:after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 0;
+width: 50%;
+height: 4px;
+background-color: var(--gold);
+transform: scaleX(0);
+transform-origin: left;
+transition: transform 0.6s ease;
+}
+
+.section-title.in-view:after {
+transform: scaleX(1);
+}
+
+.hexagon {
+clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+transition: all 0.3s ease;
+}
+
+.hexagon:hover {
+transform: rotate(10deg) scale(1.1);
+}
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-8 lg:px-12 py-12">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-2 section-title">Часто задаваемые вопросы</h2>
+            <p class="text-gray-400 mb-12">Найдите ответы на все ваши вопросы о спортивном программировании и гейм-джемах</p>
+
+            <div class="faq-container space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">1</span>
+                        </div>
+                        Кто мы?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <p>NEXUFY CODE — это платформа для проведения соревнований по спортивному программированию и гейм-джемов.</p>
+                        <p class="mt-4">Наша команда состоит из опытных программистов, организаторов хакатонов и энтузиастов игровой индустрии. Мы верим, что соревновательный дух двигает технологии вперед.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">2</span>
+                        </div>
+                        Что такое спортивное программирование?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <p>Спортивное программирование — это интеллектуальный вид спорта, где участники решают сложные алгоритмические задачи на время. Участники соревнуются в написании эффективного и корректного кода, который решает поставленную задачу.</p>
+                        <p class="mt-4">Типичные соревнования включают:</p>
+                        <ul class="list-disc pl-6 mt-2 space-y-1">
+                            <li>Решение 5-12 алгоритмических задач за ограниченное время</li>
+                            <li>Использование различных структур данных и алгоритмов</li>
+                            <li>Оптимизацию кода по времени выполнения и используемой памяти</li>
+                            <li>Работу в условиях ограниченного времени</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">3</span>
+                        </div>
+                        Что такое гейм-джем?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <p>Гейм-джем — это мероприятие, где разработчики игр (программисты, художники, дизайнеры, звукорежиссеры) собираются вместе, чтобы создать прототипы игр за ограниченное время (обычно 24-72 часа).</p>
+                        <p class="mt-4">Особенности гейм-джемов:</p>
+                        <ul class="list-disc pl-6 mt-2 space-y-1">
+                            <li>Творческая атмосфера и командная работа</li>
+                            <li>Общая тема, объявляемая в начале мероприятия</li>
+                            <li>Интенсивная разработка в сжатые сроки</li>
+                            <li>Презентация результатов и обратная связь от экспертов</li>
+                            <li>Возможность найти единомышленников и будущих коллег</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">4</span>
+                        </div>
+                        Зачем участвовать в турнирах по программированию?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <p>Участие в соревнованиях по спортивному программированию дает множество преимуществ:</p>
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="p-4 border-l-4 border-gold-500 --dark-gold">
+                                <h4 class="font-medium gold-text mb-2">Профессиональный рост</h4>
+                                <p class="text-sm">Улучшаете навыки решения задач, учитесь работать в условиях дедлайнов, осваиваете новые алгоритмы и структуры данных.</p>
+                            </div>
+                            <div class="p-4 border-l-4 border-gold-500 --dark-gold">
+                                <h4 class="font-medium gold-text mb-2">Сообщество</h4>
+                                <p class="text-sm">Знакомитесь с единомышленниками, находите наставников и будущих коллег.</p>
+                            </div>
+                            <div class="p-4 border-l-4 border-gold-500 --dark-gold">
+                                <h4 class="font-medium gold-text mb-2">Призы</h4>
+                                <p class="text-sm">Возможность выиграть денежные призы и другие награды.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">5</span>
+                        </div>
+                        Какие навыки нужны для участия?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <div class="flex flex-col md:flex-row gap-8">
+                            <div class="flex-1">
+                                <h4 class="font-medium gold-text mb-3">Для спортивного программирования:</h4>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Базовые знания любого языка программирования (C++, Python, Java и др.)</li>
+                                    <li>Понимание структур данных (массивы, списки, деревья, графы)</li>
+                                    <li>Знание основных алгоритмов (сортировка, поиск, динамическое программирование)</li>
+                                    <li>Логическое мышление и математическая подготовка</li>
+                                    <li>Готовность учиться и решать сложные задачи</li>
+                                </ul>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium gold-text mb-3">Для гейм-джемов:</h4>
+                                <ul class="list-disc pl-6 space-y-1">
+                                    <li>Базовые навыки в игровых движках (Unity, Unreal, Godot и др.)</li>
+                                    <li>Креативность и умение работать в команде</li>
+                                    <li>Готовность к интенсивной работе в сжатые сроки</li>
+                                    <li>Для художников/дизайнеров — навыки работы с графическими редакторами</li>
+                                    <li>Для звукорежиссеров — навыки создания/обработки звуков и музыки</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item p-6 rounded-lg --gray-4">
+                    <div class="faq-question text-xl font-medium cursor-pointer flex items-center">
+                        <div class="hexagon gold-bg w-8 h-8 flex items-center justify-center mr-4">
+                            <span class="text-black font-bold text-sm">6</span>
+                        </div>
+                        Как подготовиться к первому турниру?
+                    </div>
+                    <div class="faq-answer mt-4 pl-12 text-gray-300">
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium gold-text mb-2">1. Изучите основы</h4>
+                                <p>Освойте базовые структуры данных и алгоритмы. Начните с простых задач на сортировку, поиск, работу со строками и массивами.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium gold-text mb-2">2. Практикуйтесь на платформах</h4>
+                                <p>Решайте задачи на Codeforces, LeetCode, CodeChef или HackerRank. Начните с простых задач и постепенно увеличивайте сложность.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium gold-text mb-2">3. Участвуйте в виртуальных контестах</h4>
+                                <p>Многие платформы позволяют проходить прошлые соревнования в тренировочном режиме. Это поможет понять формат.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium gold-text mb-2">4. Изучите правила</h4>
+                                <p>Каждый турнир имеет свои особенности. Узнайте заранее о системе оценки, разрешенных языках и длительности.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium gold-text mb-2">5. Начните с локальных мероприятий</h4>
+                                <p>Попробуйте сначала участвовать в небольших университетских или городских соревнованиях, чтобы набраться опыта.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> <!-- пофикшу позже, сейчас мне лень смотреть css файл. Я же это не исправил, да? -->
+    </main>
+
+    <script>
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 90,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#FFD700"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 2,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#D4AF37",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+
+            // FAQ accordion functionality
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', () => {
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-answer').style.maxHeight = '0';
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    const answer = item.querySelector('.faq-answer');
+                    
+                    if (item.classList.contains('active')) {
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                    } else {
+                        answer.style.maxHeight = '0';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NEXUFY CODE | Турниры по программированию{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/base.css">
+    <style>
+        .mobile-menu {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            z-index: 100;
+        }
+        .mobile-menu.open {
+            max-height: 500px;
+        }
+        .mobile-nav-link {
+            display: block;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mobile-nav-link:last-child {
+            border-bottom: none;
+        }
+        .mobile-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-container" class="loader-container" {% if is_authenticated != False %}style="display: none;"{% endif %}>
+        <div class="loader-logo">
+            <div class="loader-hexagon">
+                <i class="fas fa-code text-black text-2xl"></i>
+            </div>
+            <div class="loader-title">NEXUFY CODE</div>
+        </div>
+        
+        <div class="loader-text">
+            Загружаем платформу, ожидайте
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <div class="content" id="content" {% if is_authenticated != False %}style="display: none;"{% endif %}>
+        <!-- Шапка -->
+        <header class="bg-black border-b border-gray-800 sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4 logo-container">
+                        <div class="hexagon w-12 h-12 gold-bg flex items-center justify-center">
+                            <i class="fas fa-code text-black text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold gold-text tracking-tighter">NEXUFY CODE</span>
+                    </div>
+                    
+                    <nav class="hidden lg:flex space-x-10 items-center">
+                        <a href="/" class="nav-link text-gray-400 {% if request.path == '/' %}active-nav text-white {% endif %} hover:text-white font-medium">Главная</a>
+                        <a href="/contests" class="nav-link text-gray-400 {% if request.path == '/contests' %}active-nav text-white {% endif %} hover:text-white font-medium">Турниры</a>
+                        <a href="/raiting" class="nav-link text-gray-400 {% if request.path == '/raiting' %}active-nav text-white {% endif %} hover:text-white font-medium">Рейтинг</a>
+                        <div class="flex space-x-4">
+                            {% if is_authenticated %}
+                                {% if request.path.startswith('/profile/') %}
+                                    <a href="/profile/{{ current_user_id }}" class="btn-outline px-6 py-2 text-white font-medium">{{ username }}</a>
+                                {% else %}
+                                    <a href="/profile/{{ user_id }}" class="btn-outline px-6 py-2 text-white font-medium">{{ username }}</a>
+                                {% endif %}
+                                <a href="/logout" class="btn-gold px-6 py-2 font-medium">Выйти</a>
+                            {% else %}
+                                <a href="/login" class="btn-outline px-6 py-2 text-white font-medium">Войти</a>
+                                <a href="/register" class="btn-gold px-6 py-2 font-medium">Регистрация</a>
+                            {% endif %}
+                        </div>
+                    </nav>
+                    
+                    <div class="lg:hidden flex items-center">
+                        {% if is_authenticated %}
+                            <a href="/profile/{{ user_id }}" class="mr-4 text-white">
+                                <i class="fas fa-user text-xl"></i>
+                            </a>
+                        {% endif %}
+                        <button class="text-white focus:outline-none" id="mobile-menu-button">
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Мобильное меню -->
+                <div class="mobile-menu lg:hidden bg-black pt-4" id="mobile-menu">
+                    <div class="flex flex-col px-4 pb-4">
+                        <a href="/" class="mobile-nav-link text-gray-400 {% if request.path == '/' %}text-white font-semibold{% endif %} hover:text-white">Главная</a>
+                        <a href="/contests" class="mobile-nav-link text-gray-400 {% if request.path == '/contests' %}text-white font-semibold{% endif %} hover:text-white">Турниры</a>
+                        <a href="/raiting" class="mobile-nav-link text-gray-400 {% if request.path == '/raiting' %}text-white font-semibold{% endif %} hover:text-white">Рейтинг</a>
+                        
+                        <div class="mt-4">
+                            {% if is_authenticated %}
+                                <a href="/profile/{{ user_id }}" class="mobile-btn bg-transparent border border-gray-600 text-white hover:bg-gray-800">Профиль</a>
+                                <a href="/logout" class="mobile-btn bg-yellow-500 text-black hover:bg-yellow-600">Выйти</a>
+                            {% else %}
+                                <a href="/login" class="mobile-btn bg-transparent border border-gray-600 text-white hover:bg-gray-800">Войти</a>
+                                <a href="/register" class="mobile-btn bg-yellow-500 text-black hover:bg-yellow-600">Регистрация</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+
+        <!-- Футер -->
+        <footer class="bg-black py-16 border-t border-gray-800">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col lg:flex-row justify-between items-center mb-16">
+                    <div class="flex items-center space-x-4 mb-8 lg:mb-0">
+                        <div class="hexagon w-12 h-12 gold-bg flex items-center justify-center">
+                            <i class="fas fa-code text-black text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold gold-text tracking-tighter">NEXUFY CODE</span>
+                    </div>
+                    
+                    <div class="flex space-x-6">
+                        <a href="#" class="w-12 h-12 rounded-sm bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition hexagon">
+                            <i class="fab fa-telegram text-xl"></i>
+                        </a>
+                        <a href="https://github.com/festW099" class="w-12 h-12 rounded-sm bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition hexagon">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+                    <div>
+                        <h3 class="text-white font-bold mb-4">Nexufy code</h3>
+                        <p class="text-gray-500">
+                            Платформа для проведения турниров по программированию с призами для победителей.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white font-bold mb-4">Навигация</h3>
+                        <ul class="space-y-2">
+                            <li><a href="/" class="text-gray-500 hover:text-white transition footer-link">Главная</a></li>
+                            <li><a href="/contests" class="text-gray-500 hover:text-white transition footer-link">Турниры</a></li>
+                            <li><a href="/raiting" class="text-gray-500 hover:text-white transition footer-link">Рейтинг</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white font-bold mb-4">Помощь</h3>
+                        <ul class="space-y-2">
+                            <li><a href="/faq" class="text-gray-500 hover:text-white transition footer-link">FAQ</a></li>
+                            <li><a href="/rules" class="text-gray-500 hover:text-white transition footer-link">Правила</a></li>
+                            <li><a href="https://t.me/oooohioooooo" class="text-gray-500 hover:text-white transition footer-link">Контакты</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-8 text-center">
+                    <p class="text-gray-500">
+                        © {{ current_year }} Nexufy code. Все права защищены.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/javascript/base.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

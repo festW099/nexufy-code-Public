@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}NEXUFY CODE | Главная{% endblock %}
+
+{% block content %}
+<!-- Герой-секция -->
+<section class="py-32 bg-gradient-to-b from-gray-1 to-black">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-8 leading-tight hero-title">
+                        <span class="gold-text">Программируй.</span><span class="gold-text">Cоревнуйся.</span><br>
+                        <span class="gold-text">Побеждай</span>
+                    </h1>
+                    <p class="text-xl text-gray-400 mb-12 max-w-2xl leading-relaxed hero-description">
+                        Прими участие в профессиональных турнирах по программированию. Решай сложные задачи, соревнуйся с лучшими разработчиками и получай призы за свои достижения.
+                    </p>
+                    <div class="flex space-x-6 hero-buttons">
+                        <a href="/contests">
+                            <button class="btn-gold px-8 py-3 font-medium text-lg">
+                                Начать сейчас
+                            </button>
+                        </a>
+                        <a href="/faq">
+                            <button class="btn-outline px-8 py-3 font-medium text-lg">
+                                Узнать больше
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Преимущества -->
+        <section class="py-24 bg-gray-2">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-16 gold-text section-title">
+                    Преимущества участия
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Карточка 1 -->
+                    <div class="card bg-gray-3 p-8" style="animation-delay: 0.1s">
+                        <div class="w-14 h-14 gold-bg flex items-center justify-center mb-6 feature-icon">
+                            <i class="fas fa-brain text-black text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Развитие мышления</h3>
+                        <p class="text-gray-400">
+                            Улучшай алгоритмическое мышление и учись решать сложные задачи в ограниченное время.
+                        </p>
+                    </div>
+                    
+                    <!-- Карточка 2 -->
+                    <div class="card bg-gray-3 p-8" style="animation-delay: 0.3s">
+                        <div class="w-14 h-14 gold-bg flex items-center justify-center mb-6 feature-icon">
+                            <i class="fas fa-award text-black text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Призы и награды</h3>
+                        <p class="text-gray-400">
+                            Победители получают денежные призы, сертификаты и признание в профессиональном сообществе.
+                        </p>
+                    </div>
+                    
+                    <!-- Карточка 3 -->
+                    <div class="card bg-gray-3 p-8" style="animation-delay: 0.5s">
+                        <div class="w-14 h-14 gold-bg flex items-center justify-center mb-6 feature-icon">
+                            <i class="fas fa-network-wired text-black text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Нетворкинг</h3>
+                        <p class="text-gray-400">
+                            Знакомься с талантливыми разработчиками и потенциальными работодателями.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Статистика -->
+        <section class="py-24 bg-black">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-16 gold-text section-title">
+                    Наша статистика
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="stat-card bg-gray-1 p-8" style="animation-delay: 0.1s">
+                        <div class="text-4xl font-bold gold-text mb-2">15K+</div>
+                        <div class="text-gray-400">Активных участников</div>
+                    </div>
+                    <div class="stat-card bg-gray-1 p-8" style="animation-delay: 0.2s">
+                        <div class="text-4xl font-bold gold-text mb-2">200+</div>
+                        <div class="text-gray-400">Проведенных турниров</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ближайшие турниры -->
+        <section class="py-24 bg-gray-2">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-16 gold-text section-title">
+                    Ближайшие турниры
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Турнир 1 -->
+                    <div class="tournament-card bg-gray-3 p-8" style="animation-delay: 0.1s">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-2xl font-bold text-white">Algorithm Challenge</h3>
+                            <span class="gold-text font-medium">Призовой фонд: $5,000</span>
+                        </div>
+                        <div class="flex space-x-6 text-gray-400 mb-6">
+                            <span class="flex items-center">
+                                <i class="fas fa-calendar-day gold-text mr-2"></i> 25.10.2023
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-clock gold-text mr-2"></i> 3 часа
+                            </span>
+                        </div>
+                        <p class="text-gray-400 mb-6">Соревнование по решению алгоритмических задач различной сложности.</p>
+                        <button class="btn-gold px-6 py-3 rounded-sm font-medium w-full">
+                            Участвовать
+                        </button>
+                    </div>
+                    
+                    <!-- Турнир 2 -->
+                    <div class="tournament-card bg-gray-3 p-8" style="animation-delay: 0.3s">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-2xl font-bold text-white">Code Sprint</h3>
+                            <span class="gold-text font-medium">Призовой фонд: $3,500</span>
+                        </div>
+                        <div class="flex space-x-6 text-gray-400 mb-6">
+                            <span class="flex items-center">
+                                <i class="fas fa-calendar-day gold-text mr-2"></i> 05.11.2023
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-clock gold-text mr-2"></i> 2 часа
+                            </span>
+                        </div>
+                        <p class="text-gray-400 mb-6">Интенсивное соревнование на скорость написания чистого и эффективного кода.</p>
+                        <button class="btn-gold px-6 py-3 rounded-sm font-medium w-full">
+                            Участвовать
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-16">
+                    <a href="/contests">
+                        <button class="btn-outline px-8 py-3 font-medium">
+                            Показать все турниры
+                        </button>
+                </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Как это работает -->
+        <section class="py-24 bg-black">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-16 gold-text section-title">
+                    Как это работает
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex flex-col items-center text-center step-item">
+                        <div class="hexagon w-20 h-20 gold-bg flex items-center justify-center mb-6">
+                            <span class="text-black text-2xl font-bold">1</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Регистрация</h3>
+                        <p class="text-gray-400">Создай аккаунт и заполни профиль</p>
+                    </div>
+                    
+                    <div class="flex flex-col items-center text-center step-item">
+                        <div class="hexagon w-20 h-20 gold-bg flex items-center justify-center mb-6">
+                            <span class="text-black text-2xl font-bold">2</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Выбор турнира</h3>
+                        <p class="text-gray-400">Выбери подходящее соревнование</p>
+                    </div>
+                    
+                    <div class="flex flex-col items-center text-center step-item">
+                        <div class="hexagon w-20 h-20 gold-bg flex items-center justify-center mb-6">
+                            <span class="text-black text-2xl font-bold">3</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Участие</h3>
+                        <p class="text-gray-400">Решай задачи и покажи свои навыки</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-32 bg-gray-1 cta-section">
+            <div class="container mx-auto px-6 text-center cta-content">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-4xl font-bold mb-8 gold-text">
+                        Готов к вызову?
+                    </h2>
+                    <p class="text-xl text-gray-400 mb-12">
+                        Присоединяйся к сообществу топовых разработчиков и начни свой путь к победам уже сегодня.
+                    </p>
+                    <div class="flex justify-center space-x-6">
+                        <a href="/contests">
+                            <button class="btn-gold px-10 py-4 font-medium text-lg">
+                                Начать участие
+                            </button>
+                        </a>
+                        <a href="/faq">
+                            <button class="btn-outline px-10 py-4 font-medium text-lg">
+                                Узнать подробности
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}

@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --gold: #FFD700;
+    --dark-gold: #D4AF37;
+    --black: #000000;
+    --gray-1: #0F0F0F;
+    --gray-2: #181818;
+    --gray-3: #222222;
+    --gray-4: #2A2A2A;
+}
+
+.feature-icon {
+    transition: all 0.3s ease;
+}
+
+.feature-icon:hover {
+    transform: rotateY(180deg);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.profile-image {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px -5px rgba(253, 230, 138, 0.4);
+}
+
+.file-input::file-selector-button {
+    background-color: #fef08a;
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.file-input::file-selector-button:hover {
+    background-color: #fde047;
+}
+
+/* Enhanced Spotlight effect */
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: radial-gradient(
+        circle at var(--x) var(--y), 
+        rgba(254, 240, 138, 0.15) 0%, 
+        rgba(0, 0, 0, 0.95) 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: background 0.3s ease;
+}
+
+/* Grid background pattern */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(254, 240, 138, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(254, 240, 138, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -2;
+    opacity: 0.3;
+}
+
+/* Particles container */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -3;
+}
+
+/* Floating elements animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.floating-element {
+    animation: float 6s ease-in-out infinite;
+}
+
+.gold-text {
+color: var(--gold);
+font-family: 'Space Grotesk', sans-serif;
+}
+
+.gold-bg {
+background-color: var(--gold);
+}
+
+.gold-border {
+border-color: var(--gold);
+}
+
+.btn-gold {
+background: var(--gold);
+color: var(--black);
+font-weight: 600;
+transition: all 0.3s ease;
+clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+}
+
+.btn-gold:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-outline {
+border: 2px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+background: rgba(255, 215, 0, 0.1);
+}
+
+.card {
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transition: all 0.3s ease;
+border-left: 4px solid var(--gold);
+transform: translateY(20px);
+opacity: 0;
+animation: fadeInUp 0.6s ease forwards;
+}
+
+.card:hover {
+transform: translateY(-8px) !important;
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.nav-link {
+position: relative;
+padding: 8px 0;
+}
+
+.nav-link:after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 0;
+height: 2px;
+background-color: var(--gold);
+transition: width 0.3s ease;
+}
+    
+.nav-link:hover:after {
+width: 100%;
+}
+
+.active-nav:after {
+width: 100%;
+}
+
+.stat-card {
+border-bottom: 4px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transform: scale(0.95);
+transition: all 0.3s ease;
+opacity: 0;
+animation: fadeInScale 0.6s ease forwards;
+}
+
+.stat-card:hover {
+transform: scale(1.05) !important;
+}
+
+.tournament-card {
+border-top: 4px solid var(--gold);
+clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+transform: translateY(20px);
+opacity: 0;
+animation: fadeInUp 0.6s ease forwards;
+}
+
+.tournament-card:hover {
+transform: translateY(-8px) !important;
+}
+
+.hexagon {
+clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+transition: all 0.3s ease;
+}
+
+.hexagon:hover {
+transform: rotate(10deg) scale(1.1);
+}
+
+.section-title {
+position: relative;
+display: inline-block;
+}
+
+.section-title:after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 0;
+width: 50%;
+height: 4px;
+background-color: var(--gold);
+transform: scaleX(0);
+transform-origin: left;
+transition: transform 0.6s ease;
+}
+
+.section-title.in-view:after {
+transform: scaleX(1);
+}
+
+.hexagon {
+clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+transition: all 0.3s ease;
+}
+
+.hexagon:hover {
+transform: rotate(10deg) scale(1.1);
+}

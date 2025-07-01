@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали события</title>
+</head>
+<body>
+    <h1>Событие успешно добавлено!</h1>
+    <h2>{{ event[2] }}</h2>
+    <p><strong>Тип:</strong> {{ event[1] }}</p>
+    <p><strong>Описание:</strong> {{ event[3] }}</p>
+    <p><strong>Дата:</strong> {{ event[4] }}</p>
+    <p><strong>Длительность:</strong> {{ event[5] }}</p>
+    <p><strong>Цена:</strong> {{ event[6] }}</p>
+    <p><strong>Приз:</strong> {{ event[7] }}</p>
+    <p><strong>ID события:</strong> {{ event[8] }}</p>
+    <a href="{{ url_for('admin_content') }}">Добавить еще одно событие</a>
+</body>
+</html>

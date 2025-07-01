@@ -1,0 +1,143 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <!-- Основное содержимое -->
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">Панель управления</h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>root</span>
+            </div>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Всего пользователей</div>
+                <div class="stat-value gold-text">{{ "{:,}".format(stats.total_users) }}</div>
+                <div class="stat-change {% if stats.users_change < 0 %}negative{% endif %}">
+                     {{ "%+.1f"|format(stats.users_change) }}% за месяц
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Активных сессий</div>
+                <div class="stat-value gold-text">error</div>
+                <div class="stat-change">
+                    error% за день
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Новых регистраций</div>
+                <div class="stat-value gold-text">{{ stats.new_registrations }}</div>
+                <div class="stat-change {% if stats.registrations_change < 0 %}negative{% endif %}">
+                    {{ "%+.1f"|format(stats.registrations_change) }}% за неделю
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Всего забанено</div>
+                <div class="stat-value gold-text">{{ stats.banned_users }}</div>
+            </div>
+        </div>
+        
+        <!-- Основной контент -->
+        <div class="content-grid">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Последние пользователи</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Дата регистрации</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.date }}</td>
+                            <td>
+                                <span class="status 
+                                    {% if user.block == 'True' %}banned
+                                    {% elif user.block == 'Modern' %}pending
+                                    {% else %}active{% endif %}">
+                                    {% if user.block == 'True' %}Заблокирован
+                                    {% elif user.block == 'Modern' %}На модерации
+                                    {% else %}Активен{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('toggle_user_block', user_id=user.id) }}" method="POST" style="display: inline;">
+                                    {% if user.block == 'False' or user.block == 'Modern' %}
+                                    <button type="submit" class="action-btn" title="Заблокировать">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    {% else %}
+                                    <button type="submit" class="action-btn" title="Разблокировать">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="quick-actions">
+                <h2 class="table-title">Быстрые действия</h2>
+                <div class="action-item">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <a href="/register" class="action-link">
+                        <div class="action-text">
+                            <div class="action-title">Добавить пользователя</div>
+                            <div class="action-desc">Создать новую учетную запись вручную</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="action-item">
+                    <div class="action-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="action-text">
+                        <div class="action-title">Отправить уведомление</div>
+                        <div class="action-desc">Массовая рассылка пользователям</div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="action-text">
+                        <div class="action-title">Настройки системы</div>
+                        <div class="action-desc">Основные параметры работы</div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <a href="{{ url_for('backup_database') }}" class="action-link">
+                        <div class="action-text">
+                            <div class="action-title">Резервное копирование</div>
+                            <div class="action-desc">Создать backup базы данных</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | Помехи</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/404.css">
+</head>
+<body>
+    <!-- Эффект помех -->
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    
+    <!-- Анимированные пиксели -->
+    <div id="pixels-container"></div>
+    
+    <!-- Индикатор сигнала -->
+    <div class="signal-bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    
+    <!-- Основной контент с эффектом глитча -->
+    <div class="glitch-container">
+        <div class="container">
+            <h1 class="glitch" data-text="404">404</h1>
+            <h2>СИГНАЛ ПРЕРВАН</h2>
+            <p>ПОЛУЧЕНА ОШИБКА ПРИ ЗАГРУЗКЕ</p>
+            <button class="btn" id="actionBtn">ПЕРЕКЛЮЧИТЬ НА ГЛАВНЫЙ КАНАЛ</button>
+        </div>
+    </div>
+    
+    <!-- Мигающий код ошибки -->
+    <div class="error-code">ERROR_0x4A6F6C6C79</div>
+
+    <script src="../static/javascript/404.js" ></script>
+</body>
+</html>

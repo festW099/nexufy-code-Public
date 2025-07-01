@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/register.css">
+</head>
+<body>
+    <div class="spotlight-bg" id="spotlight"></div>
+    <div class="particles" id="particles"></div>
+
+    <button class="back-btn" id="closeBtn" title="Назад">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    
+    <div class="registration-container">
+        <div class="registration-form">
+            <h2>Создать аккаунт</h2>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            
+            <form id="registrationForm" method="post">
+                <div class="form-group">
+                    <label for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Электронная почта</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required minlength="8">
+                    <div class="password-requirements">Минимум 8 символов</div>
+                    <div class="error-message" id="passwordError">Пароль должен содержать не менее 8 символов</div>
+                </div>
+
+                <div class="agreement-checkbox">
+                    <input type="checkbox" id="agreement" name="agreement" required>
+                    <span class="accept-text">Я принимаю</span> <a href="agreements" class="terms-link">условия соглашения</a>
+                    <div class="error-message" id="agreementError">Необходимо принять условия соглашения</div>
+                </div>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/javascript/register.js" ></script>
+</body>
+</html>

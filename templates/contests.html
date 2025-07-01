@@ -1,0 +1,449 @@
+{% extends "base.html" %}
+
+{% block title %}NEXUFY CODE | ТУРНИРЫ{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турниры - Полная информация</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+        
+        :root {
+            --primary-color: #FFD700;
+            --secondary-color: #000000;
+            --accent-color: #FF5555;
+            --bg-color: #0A0A0A;
+            --card-bg: #1A1A1A;
+            --text-color: #FFFFFF;
+            --text-secondary: #AAAAAA;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .tournaments-container {
+            background-color: rgba(26, 26, 26, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .tournaments-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        
+        .tournaments-table th {
+            background-color: rgba(51, 51, 51, 0.8);
+            color: var(--primary-color);
+            padding: 12px 8px;
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+        
+        .tournaments-table th:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        
+        .tournaments-table th:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .tournaments-table td {
+            padding: 12px 8px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            vertical-align: middle;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .tournaments-table td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        
+        .tournaments-table td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .tournaments-table tr:hover td {
+            background-color: #222222;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .participate-btn {
+            background: linear-gradient(135deg, var(--primary-color), #FFC000);
+            color: #000000;
+            border: none;
+            padding: 8px 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .participate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #FFC000, var(--primary-color));
+        }
+        
+        .participate-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .participate-btn:disabled {
+            background: #555555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .prize-amount {
+            font-weight: bold;
+            color: var(--primary-color);
+            white-space: nowrap;
+        }
+        
+        .location {
+            font-style: italic;
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+        
+        .date {
+            white-space: nowrap;
+        }
+        
+        .duration {
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        .time-remaining {
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        
+        .time-remaining.soon {
+            color: var(--accent-color);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            color: var(--text-secondary);
+            position: relative;
+            font-size: 0.9em;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 25%;
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.7em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-registering {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #000;
+        }
+        
+        .status-full {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        
+        .status-started {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: #000;
+        }
+        
+        .status-soon {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Анимация появления строк */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tournaments-table tbody tr {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        .tournaments-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .tournaments-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .tournaments-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .tournaments-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .tournaments-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        .tournaments-table tbody tr:nth-child(6) { animation-delay: 0.6s; }
+        .tournaments-table tbody tr:nth-child(7) { animation-delay: 0.7s; }
+        .tournaments-table tbody tr:nth-child(8) { animation-delay: 0.8s; }
+        
+        /* Анимация заголовка */
+        .title-animate {
+            display: inline-block;
+        }
+        
+        .title-animate span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: titleLetter 0.5s ease forwards;
+        }
+        
+        @keyframes titleLetter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 10px 0;
+            }
+            
+            header {
+                padding: 20px 0;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .tournaments-container {
+                padding: 10px;
+            }
+            
+            .tournaments-table {
+                font-size: 0.85em;
+            }
+            
+            .tournaments-table th, 
+            .tournaments-table td {
+                padding: 8px 6px;
+            }
+            
+            .participate-btn {
+                padding: 6px 8px;
+                font-size: 0.7em;
+            }
+            
+            .status-badge {
+                font-size: 0.65em;
+                padding: 3px 6px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .tournaments-table {
+                font-size: 0.8em;
+            }
+            
+            footer {
+                font-size: 0.8em;
+            }
+        }
+
+    .status-in-progress {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: #fff;
+        animation: pulse 2s infinite;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container" style="  margin-left: auto;
+    margin-right: auto;
+    margin: 0 auto;">
+        <table class="tournaments-table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Дата</th>
+            <th>Длительность</th>
+            <th>До начала/конца</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td class="date">{{ event.date }}</td>
+            <td class="duration">{{ event.duration }}</td>
+            <td class="time-remaining">{{ event.time_remaining }}</td>
+            <td>
+                <span class="status-badge 
+                    {% if event.status == 'Регистрация' %}status-registering
+                    {% elif event.status == 'В процессе' %}status-in-progress
+                    {% else %}status-started{% endif %}">
+                    {{ event.status }}
+                </span>
+            </td>
+            <td>
+                {% if event.status == 'Регистрация' %}
+                    <a href="/contests/{{ event.id }}" class="participate-btn">Участвовать</a>
+                {% elif event.status == 'В процессе' %}
+                    <a href="/contests/{{ event.id }}" class="participate-btn" style="background: #9b59b6; cursor: default;">Участвовать</a>
+                {% else %}
+                    <!-- Для завершенных турниров ничего не отображаем -->
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+    <script>
+        $(document).ready(function() {
+            // Анимация заголовка по буквам
+            const title = $(".title-animate");
+            const text = title.text();
+            title.empty();
+            
+            for (let i = 0; i < text.length; i++) {
+                const span = $("<span>").text(text[i]);
+                if (text[i] === " ") span.html("&nbsp;");
+                span.css("animation-delay", (i * 0.05) + "s");
+                title.append(span);
+            }
+            
+            // Обработка нажатия кнопки "Участвовать"
+            $(".participate-btn:not(:disabled)").click(function() {
+                const row = $(this).closest("tr");
+                const tournamentName = row.find("td:first").text();
+                
+                // Анимация нажатия
+                $(this).addClass("animate__animated animate__pulse");
+                
+                setTimeout(() => {
+                    $(this).removeClass("animate__animated animate__pulse");
+                }, 500);
+                
+                // Показываем уведомление
+                alert(`Вы успешно зарегистрированы на турнир "${tournamentName}"!`);
+            });
+            
+            // Подсветка строки при наведении
+            $(".tournaments-table tbody tr").hover(
+                function() {
+                    $(this).addClass("animate__animated animate__pulse");
+                },
+                function() {
+                    $(this).removeClass("animate__animated animate__pulse");
+                }
+            );
+            
+            // Анимация появления при скролле
+            function animateOnScroll() {
+                $(".tournaments-table tbody tr").each(function() {
+                    const rowTop = $(this).offset().top;
+                    const windowBottom = $(window).scrollTop() + $(window).height();
+                    
+                    if (rowTop < windowBottom) {
+                        $(this).css("opacity", "1");
+                    }
+                });
+            }
+            
+            $(window).scroll(animateOnScroll);
+            animateOnScroll();
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

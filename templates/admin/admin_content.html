@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<div class="table-card" style="margin-left: 20%; width: 700px;">
+    <div class="table-header">
+        <h2 class="table-title gold-text">Добавить новое событие</h2>
+    </div>
+    
+    <form method="POST" style="margin-left: 15%; margin-right: 15%;">
+        <div class="form-group-add" >
+            <label for="type" class="gold-text">Тип события:</label>
+            <select id="type" name="type" class="form-control-add" required>
+                <option value="">-- Выберите тип --</option>
+                <option value="ctf">CTF</option>
+                <option value="gamejam">GameJam</option>
+                <option value="sportprogramming">SportProgramming</option>
+            </select>
+        </div>
+        
+        <div class="form-group-add">
+            <label for="name" class="gold-text">Название:</label>
+            <input type="text" id="name" name="name" class="form-control-add" required>
+        </div>
+        
+        <div class="form-group-add">
+            <label for="description" class="gold-text">Описание:</label>
+            <textarea id="description" name="description" class="form-control-add" rows="4" required></textarea>
+        </div>
+        
+        <div class="form-group-add">
+            <label for="date" class="gold-text">Дата:</label>
+            <input type="text" id="date" name="date" class="form-control-add" required>
+        </div>
+        
+        <script>
+            $( function() {
+                $( "#date" ).datepicker();
+            } );
+        </script>
+        
+        <div class="form-group-add">
+            <label for="long" class="gold-text">Длительность:</label>
+            <input type="text" id="long" name="long" class="form-control-add" required>
+        </div>
+        
+        <div class="form-group-add">
+            <label for="price" class="gold-text">Цена:</label>
+            <input type="number" id="price" name="price" class="form-control-add" required>
+        </div>
+        
+        <div class="form-group-add">
+            <label for="prize" class="gold-text">Приз:</label>
+            <input type="number" id="prize" name="prize" class="form-control-add" required>
+        </div>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        
+        <div class="form-group-add">
+            <label for="long" class="gold-text">Начало:</label>
+            <input type="text" id="start" name="start" class="form-control-add" required>
+        </div>
+        
+        <script>
+            flatpickr("#long", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+            });
+        </script>
+        
+        <button type="submit" class="btn-gold" style="padding: 12px 24px; font-size: 16px;">Создать событие</button>
+    </form>
+</div>
+{% endblock %}

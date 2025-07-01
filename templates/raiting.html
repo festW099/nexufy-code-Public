@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}NEXUFY CODE | Рейтинг{% endblock %}
+
+{% block content %}
+<script src="../static/javascript/raiting.js" ></script>
+<style>
+    .sharp-corners {
+        border-radius: 0 !important;
+    }
+    .rank-1 {
+        background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(0,0,0,0) 100%);
+    }
+    .rank-2 {
+        background: linear-gradient(90deg, rgba(255,215,0,0.05) 0%, rgba(0,0,0,0) 100%);
+    }
+    .rank-3 {
+        background: linear-gradient(90deg, rgba(255,215,0,0.03) 0%, rgba(0,0,0,0) 100%);
+    }
+    .table-header {
+        background-color: rgba(17, 17, 17, 0.5);
+        color: #FFD700;
+        backdrop-filter: blur(5px);
+    }
+    .user-row:hover {
+        background-color: rgba(255, 215, 0, 0.05) !important;
+    }
+    .no-photo {
+        background-color: rgba(31, 41, 55, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9CA3AF;
+    }
+    @media (max-width: 640px) {
+        .responsive-padding {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        .responsive-text {
+            font-size: 0.875rem !important;
+        }
+        .responsive-avatar {
+            height: 2rem !important;
+            width: 2rem !important;
+        }
+    }
+</style>
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-primary-yellow md:text-4xl">ТОП 10 ПОЛЬЗОВАТЕЛЕЙ</h1>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-800">
+            <thead>
+                <tr class="table-header">
+                    <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider sharp-corners md:px-7 md:py-5 md:text-base">№</th>
+                    <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider sharp-corners md:px-7 md:py-5 md:text-base"></th>
+                    <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider sharp-corners md:px-7 md:py-5 md:text-base">Пользователь</th>
+                    <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider sharp-corners md:px-7 md:py-5 md:text-base">Рейтинг</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+                {% for user in top_users %}
+                <tr class="user-row clickable-row {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% endif %}" data-href="/profile/{{ user.id }}">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300 md:px-7 md:py-5 md:text-base responsive-padding">
+                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 md:w-7 md:h-7">
+                            {% if loop.index == 1 %}
+                            <i class="fas fa-crown text-primary-yellow md:text-lg"></i>
+                            {% elif loop.index == 2 %}
+                            <i class="fas fa-medal text-gray-300 md:text-lg"></i>
+                            {% elif loop.index == 3 %}
+                            <i class="fas fa-award text-amber-400 md:text-lg"></i>
+                            {% else %}
+                            {{ loop.index }}
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="pr-0 py-4 whitespace-nowrap md:py-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden {% if not user.photo_path %}no-photo{% endif %} md:h-11 md:w-11 responsive-avatar">
+                                {% if user.photo_path %}
+                                <img class="h-full w-full object-cover" src="/static/photos/{{ user.photo_path }}" alt="Фото">
+                                {% else %}
+                                <i class="fas fa-user text-sm md:text-base"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="pl-3 py-4 whitespace-nowrap md:pl-4 md:py-5 responsive-padding">
+                        <a href="/profile/{{ user.id }}" class="text-sm font-medium text-yellow-300 md:text-base responsive-text hover:text-yellow-200 hover:underline">
+                            {{ user.username }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-primary-yellow font-bold md:px-7 md:py-5 md:text-base responsive-padding">
+                        <div class="flex items-center">
+                            <span class="mr-1 md:mr-1.5">{{ user.raiting }}</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.clickable-row');
+
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.getAttribute('data-href');
+        });
+    });
+});
+</script>
+
+{% endblock %}
