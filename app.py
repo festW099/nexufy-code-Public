@@ -84,6 +84,35 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Создаем папку для фото, если ее нет
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/teach', methods=['GET', 'POST'])
+def teach():
+    db = get_db_connection_user()
+        
+    try:
+        current_user = db.execute('SELECT block FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+        
+        if current_user is None:
+            db.close()
+            flash('Пользователь не найден', 'danger')
+            return redirect(url_for('index'))  
+            
+        if current_user['block'] == 'True':
+            db.close()
+            flash('Ваш аккаунт заблокирован. Доступ к профилям ограничен.', 'danger')
+            return redirect(url_for('ban'))
+    except Exception as e:
+        pass
+
+    user_id = session.get('user_id')
+    if user_id == None:
+        username = session.get('username')
+    else:
+        username = db.execute('SELECT username FROM users WHERE id = ?', (user_id,)).fetchone()
+        username = username['username']
+    is_authenticated = 'username' in session
+    db.close()
+    return render_template('teach/main.html', is_authenticated=is_authenticated, username=username, current_user_id=user_id, user_id=user_id)
+
 @app.route('/contests')
 def contests():
     db = get_db_connection_user()

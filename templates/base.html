@@ -77,6 +77,7 @@
                         <a href="/" class="nav-link text-gray-400 {% if request.path == '/' %}active-nav text-white {% endif %} hover:text-white font-medium">Главная</a>
                         <a href="/contests" class="nav-link text-gray-400 {% if request.path == '/contests' %}active-nav text-white {% endif %} hover:text-white font-medium">Турниры</a>
                         <a href="/raiting" class="nav-link text-gray-400 {% if request.path == '/raiting' %}active-nav text-white {% endif %} hover:text-white font-medium">Рейтинг</a>
+                        <a href="/teach" class="nav-link text-gray-400 {% if request.path == '/teach' %}active-nav text-white {% endif %} hover:text-white font-medium">Обучение</a>
                         <div class="flex space-x-4">
                             {% if is_authenticated %}
                                 {% if request.path.startswith('/profile/') %}
