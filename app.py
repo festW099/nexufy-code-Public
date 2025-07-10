@@ -17,7 +17,7 @@ app.secret_key = secrets.token_hex(24)  # Генерируем секретны�
 # Путь к базе данных
 DATABASE_USER = 'Database/users.db'
 DATABASE_EVENTS = 'Database/events.db'
-
+#тест
 # Функция для подключения к базе данных
 def get_db_connection_user():
     conn = sqlite3.connect(DATABASE_USER)
