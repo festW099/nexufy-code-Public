@@ -1,156 +1,382 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Add Tasks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --accent-yellow: #FFD700;
+            --accent-dark-yellow: #FFC600;
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --border-color: #333333;
         }
-        .task-form {
-            margin-bottom: 30px;
+        
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            width: 90%;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
         }
+        
+        h1, h2, h3, h4 {
+            color: var(--accent-yellow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--accent-yellow);
+            border-radius: 2px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-yellow);
+            padding-left: 15px;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+        }
+        
+        .task-form {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--secondary-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+        
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--accent-yellow);
         }
-        .form-group input, .form-group textarea {
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: inherit;
         }
+        
+        .form-group input:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        }
+        
         .form-group textarea {
-            height: 80px;
+            height: 100px;
             resize: vertical;
+            min-height: 80px;
         }
+        
         .test-case {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--primary-bg);
             position: relative;
+            animation: slideIn 0.4s ease-out;
         }
+        
         .test-case h4 {
             margin-top: 0;
+            color: var(--text-primary);
         }
+        
         .remove-test {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 10px;
             background: #ff4444;
             color: white;
             border: none;
-            border-radius: 3px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
+        
+        .remove-test:hover {
+            background: #ff0000;
+            transform: scale(1.1);
+        }
+        
         .buttons {
-            margin-top: 20px;
-        }
-        button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        button.delete {
-            background-color: #f44336;
-        }
-        .task-list {
             margin-top: 30px;
+            display: flex;
+            gap: 15px;
         }
+        
+        button {
+            padding: 12px 25px;
+            background-color: var(--accent-yellow);
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background-color: var(--accent-dark-yellow);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.delete {
+            background-color: #ff4444;
+            color: white;
+        }
+        
+        button.delete:hover {
+            background-color: #ff0000;
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+        }
+        
+        .task-list {
+            margin-top: 50px;
+        }
+        
         .task-item {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            background-color: white;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--secondary-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.6s ease-out;
         }
+        
+        .task-item h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0;
+        }
+        
         .test-item {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px dashed #ddd;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            background-color: rgba(255, 215, 0, 0.05);
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .test-item p {
+            margin: 8px 0;
+        }
+        
+        .test-item strong {
+            color: var(--accent-yellow);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Добавим немного анимации при наведении на элементы */
+        .task-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-case:hover {
+            border-color: var(--accent-yellow);
+        }
+        
+        /* Анимация для кнопки добавления тест-кейса */
+        .add-test-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .add-test-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .add-test-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .task-form, .task-item {
+                padding: 20px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Add Tasks for Event #{{ event_id }}</h1>
-    
-    <div class="task-form">
-        <h2>Add New Task</h2>
-        <form method="POST" id="taskForm">
-            <div class="form-group">
-                <label for="name">Task Name:</label>
-                <input type="text" name="name" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea name="description" required></textarea>
-            </div>
-            
-            <h3>Test Cases</h3>
-            <div id="testCasesContainer">
-                <div class="test-case" id="testCase_1">
-                    <button type="button" class="remove-test" onclick="removeTestCase(1)">×</button>
-                    <h4>Test Case #1</h4>
-                    <div class="form-group">
-                        <label>Input Data:</label>
-                        <textarea name="input_1"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Output Data:</label>
-                        <textarea name="output_1"></textarea>
-                    </div>
+    <div class="container">
+        <h1>Add Tasks for Event #{{ event_id }}</h1>
+        
+        <div class="task-form">
+            <h2>Add New Task</h2>
+            <form method="POST" id="taskForm">
+                <div class="form-group">
+                    <label for="name">Task Name:</label>
+                    <input type="text" name="name" required>
                 </div>
-            </div>
-            
-            <div class="buttons">
-                <button type="button" onclick="addTestCase()">Add Test Case</button>
-                <button type="submit">Save Task</button>
-            </div>
-        </form>
-    </div>
-    
-    <div class="task-list">
-        <h2>Existing Tasks</h2>
-        {% if tasks %}
-            {% for task in tasks %}
-                <div class="task-item">
-                    <h3>{{ task.name }}
-                        <form action="{{ url_for('delete_task', event_id=event_id, task_id=task.id) }}" method="POST" style="display: inline;">
-                            <button type="submit" class="delete">Delete</button>
-                        </form>
-                    </h3>
-                    <p>{{ task.description }}</p>
-                    
-                    <h4>Test Cases:</h4>
-                    {% for test in task.test_cases %}
-                        <div class="test-item">
-                            <p><strong>Input:</strong><br>{{ test.input }}</p>
-                            <p><strong>Output:</strong><br>{{ test.output }}</p>
+                
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea name="description" required></textarea>
+                </div>
+                
+                <h3>Test Cases</h3>
+                <div id="testCasesContainer">
+                    <div class="test-case" id="testCase_1">
+                        <h4>Test Case #1</h4>
+                        <div class="form-group">
+                            <label>Input Data:</label>
+                            <textarea name="input_1"></textarea>
                         </div>
-                    {% endfor %}
+                        <div class="form-group">
+                            <label>Output Data:</label>
+                            <textarea name="output_1"></textarea>
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p>No tasks yet.</p>
-        {% endif %}
+                
+                <div class="buttons">
+                    <button type="button" class="add-test-btn" onclick="addTestCase()">Add Test Case</button>
+                    <button type="submit">Save Task</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="task-list">
+            <h2>Existing Tasks</h2>
+            {% if tasks %}
+                {% for task in tasks %}
+                    <div class="task-item">
+                        <h3>{{ task.name }}
+                            <form action="{{ url_for('delete_task', event_id=event_id, task_id=task.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="delete">Delete</button>
+                            </form>
+                        </h3>
+                        <p>{{ task.description }}</p>
+                        
+                        <h4>Test Cases:</h4>
+                        {% for test in task.test_cases %}
+                            <div class="test-item">
+                                <p><strong>Input:</strong><br>{{ test.input }}</p>
+                                <p><strong>Output:</strong><br>{{ test.output }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="task-item">
+                    <p>No tasks yet.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
     <script>
@@ -161,8 +387,10 @@
             const newTestCase = document.createElement('div');
             newTestCase.className = 'test-case';
             newTestCase.id = `testCase_${testCaseCount}`;
+            newTestCase.style.opacity = '0';
+            newTestCase.style.transform = 'translateY(20px)';
             newTestCase.innerHTML = `
-                <button type="button" class="remove-test" onclick="removeTestCase(${testCaseCount})">×</button>
+                <button type="button" class="remove-test" onclick="removeTestCase(${testCaseCount})">Delete</button>
                 <h4>Test Case #${testCaseCount}</h4>
                 <div class="form-group">
                     <label>Input Data:</label>
@@ -174,29 +402,70 @@
                 </div>
             `;
             document.getElementById('testCasesContainer').appendChild(newTestCase);
+            
+            // Анимация появления
+            setTimeout(() => {
+                newTestCase.style.opacity = '1';
+                newTestCase.style.transform = 'translateY(0)';
+            }, 10);
         }
         
         function removeTestCase(id) {
             if (testCaseCount > 1) {
                 const element = document.getElementById(`testCase_${id}`);
-                element.remove();
-                testCaseCount--;
-                // Перенумеровываем оставшиеся тест-кейсы
-                const containers = document.querySelectorAll('.test-case');
-                containers.forEach((container, index) => {
-                    const newId = index + 1;
-                    container.id = `testCase_${newId}`;
-                    container.querySelector('h4').textContent = `Test Case #${newId}`;
-                    container.querySelectorAll('textarea').forEach(textarea => {
-                        const name = textarea.name.split('_')[0];
-                        textarea.name = `${name}_${newId}`;
+                // Анимация исчезновения
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(-20px)';
+                element.style.height = '0';
+                element.style.padding = '0';
+                element.style.margin = '0';
+                element.style.border = 'none';
+                element.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    element.remove();
+                    testCaseCount--;
+                    // Перенумеровываем оставшиеся тест-кейсы
+                    const containers = document.querySelectorAll('.test-case');
+                    containers.forEach((container, index) => {
+                        const newId = index + 1;
+                        container.id = `testCase_${newId}`;
+                        container.querySelector('h4').textContent = `Test Case #${newId}`;
+                        container.querySelectorAll('textarea').forEach(textarea => {
+                            const name = textarea.name.split('_')[0];
+                            textarea.name = `${name}_${newId}`;
+                        });
+                        container.querySelector('.remove-test').onclick = function() {
+                            removeTestCase(newId);
+                        };
                     });
-                    container.querySelector('.remove-test').onclick = function() {
-                        removeTestCase(newId);
-                    };
-                });
+                }, 300);
             }
         }
+        
+        // Добавим эффект ripple для кнопок
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Создаем эффект ripple
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple-effect';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 1000);
+                });
+            });
+        });
     </script>
 </body>
 </html>
+{% endblock %}
