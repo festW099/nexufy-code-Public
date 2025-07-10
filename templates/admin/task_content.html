@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .task-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .test-case {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: white;
+            position: relative;
+        }
+        .test-case h4 {
+            margin-top: 0;
+        }
+        .remove-test {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button.delete {
+            background-color: #f44336;
+        }
+        .task-list {
+            margin-top: 30px;
+        }
+        .task-item {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px dashed #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Tasks for Event #{{ event_id }}</h1>
+    
+    <div class="task-form">
+        <h2>Add New Task</h2>
+        <form method="POST" id="taskForm">
+            <div class="form-group">
+                <label for="name">Task Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea name="description" required></textarea>
+            </div>
+            
+            <h3>Test Cases</h3>
+            <div id="testCasesContainer">
+                <div class="test-case" id="testCase_1">
+                    <button type="button" class="remove-test" onclick="removeTestCase(1)">×</button>
+                    <h4>Test Case #1</h4>
+                    <div class="form-group">
+                        <label>Input Data:</label>
+                        <textarea name="input_1"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Output Data:</label>
+                        <textarea name="output_1"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button type="button" onclick="addTestCase()">Add Test Case</button>
+                <button type="submit">Save Task</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="task-list">
+        <h2>Existing Tasks</h2>
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="task-item">
+                    <h3>{{ task.name }}
+                        <form action="{{ url_for('delete_task', event_id=event_id, task_id=task.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="delete">Delete</button>
+                        </form>
+                    </h3>
+                    <p>{{ task.description }}</p>
+                    
+                    <h4>Test Cases:</h4>
+                    {% for test in task.test_cases %}
+                        <div class="test-item">
+                            <p><strong>Input:</strong><br>{{ test.input }}</p>
+                            <p><strong>Output:</strong><br>{{ test.output }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No tasks yet.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        let testCaseCount = 1;
+        
+        function addTestCase() {
+            testCaseCount++;
+            const newTestCase = document.createElement('div');
+            newTestCase.className = 'test-case';
+            newTestCase.id = `testCase_${testCaseCount}`;
+            newTestCase.innerHTML = `
+                <button type="button" class="remove-test" onclick="removeTestCase(${testCaseCount})">×</button>
+                <h4>Test Case #${testCaseCount}</h4>
+                <div class="form-group">
+                    <label>Input Data:</label>
+                    <textarea name="input_${testCaseCount}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Output Data:</label>
+                    <textarea name="output_${testCaseCount}"></textarea>
+                </div>
+            `;
+            document.getElementById('testCasesContainer').appendChild(newTestCase);
+        }
+        
+        function removeTestCase(id) {
+            if (testCaseCount > 1) {
+                const element = document.getElementById(`testCase_${id}`);
+                element.remove();
+                testCaseCount--;
+                // Перенумеровываем оставшиеся тест-кейсы
+                const containers = document.querySelectorAll('.test-case');
+                containers.forEach((container, index) => {
+                    const newId = index + 1;
+                    container.id = `testCase_${newId}`;
+                    container.querySelector('h4').textContent = `Test Case #${newId}`;
+                    container.querySelectorAll('textarea').forEach(textarea => {
+                        const name = textarea.name.split('_')[0];
+                        textarea.name = `${name}_${newId}`;
+                    });
+                    container.querySelector('.remove-test').onclick = function() {
+                        removeTestCase(newId);
+                    };
+                });
+            }
+        }
+    </script>
+</body>
+</html>

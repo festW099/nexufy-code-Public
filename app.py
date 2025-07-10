@@ -76,6 +76,26 @@ def init_db():
 
 init_db()
 
+def init_tasks_db():
+    os.makedirs('Database', exist_ok=True)
+    conn = sqlite3.connect('Database/tasks.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            description TEXT NOT NULL,
+            test_cases TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_events_db()
+init_tasks_db()
+
 # Настройка загрузки файлов
 UPLOAD_FOLDER = 'static/photos'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -83,6 +103,72 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Создаем папку для фото, если ее нет
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/admin/content/<int:event_id>', methods=['GET', 'POST'])
+def admin_content(event_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        # Собираем все тест-кейсы
+        test_cases = []
+        i = 1
+        while True:
+            input_data = request.form.get(f'input_{i}', '').strip()
+            output_data = request.form.get(f'output_{i}', '').strip()
+            if not input_data and not output_data and i > 1:
+                break
+            if input_data or output_data:
+                test_cases.append(f"{input_data}|||{output_data}")
+            i += 1
+        
+        # Сохраняем в базу данных
+        conn = sqlite3.connect('Database/tasks.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO tasks (event_id, name, description, test_cases)
+            VALUES (?, ?, ?, ?)
+        ''', (event_id, name, description, ';;;'.join(test_cases)))
+        conn.commit()
+        conn.close()
+        
+        return redirect(url_for('admin_content', event_id=event_id))
+    
+    # Получаем задачи из базы данных
+    conn = sqlite3.connect('Database/tasks.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM tasks WHERE event_id = ?', (event_id,))
+    tasks = []
+    for row in cursor.fetchall():
+        test_cases = []
+        if row[4]:  # Проверяем наличие test_cases
+            for case in row[4].split(';;;'):
+                parts = case.split('|||', 1)  # Разделяем только по первому вхождению
+                input_data = parts[0] if len(parts) > 0 else ''
+                output_data = parts[1] if len(parts) > 1 else ''
+                test_cases.append({'input': input_data, 'output': output_data})
+        tasks.append({
+            'id': row[0],
+            'name': row[2],
+            'description': row[3],
+            'test_cases': test_cases
+        })
+    conn.close()
+    
+    return render_template('admin/task_content.html', event_id=event_id, tasks=tasks)
+
+@app.route('/admin/content/<int:event_id>/delete_task/<int:task_id>', methods=['POST'])
+def delete_task(event_id, task_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    conn = sqlite3.connect('Database/tasks.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('admin_content', event_id=event_id))
 
 @app.route('/teach', methods=['GET', 'POST'])
 def teach():
@@ -768,7 +854,7 @@ def backup_database():
 
 # Маршрут для отображения формы добавления события
 @app.route('/admin/content', methods=['GET', 'POST'])
-def admin_content():
+def admin_content1():
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
     if request.method == 'POST':
@@ -802,24 +888,6 @@ def admin_content():
     
     # Если GET запрос, просто отображаем форму
     return render_template('admin/admin_content.html')
-
-# Маршрут для отображения деталей события
-@app.route('/admin/content/<id>')
-def event_detail(id):
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin_login'))
-    conn = sqlite3.connect('Database/events.db')
-    cursor = conn.cursor()
-    
-    cursor.execute('SELECT * FROM events WHERE id = ?', (id,))
-    event = cursor.fetchone()
-    
-    conn.close()
-    
-    if event:
-        return render_template('admin/event_detail.html', event=event)
-    else:
-        return "Событие не найдено", 404
 
 
 @app.errorhandler(404)
