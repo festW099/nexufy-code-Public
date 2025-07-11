@@ -104,10 +104,72 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Создаем папку для фото, если ее нет
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/admin/content', methods=['GET', 'POST'])
+def admin_content1():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    if request.method == 'POST':
+        # Получаем данные из формы
+        event_type = request.form['type']
+        name = request.form['name']
+        description = request.form['description']
+        start_datetime = request.form['start']  # Получаем дату и время начала
+        long_text = request.form['long']
+        price = int(request.form['price'])
+        prize = int(request.form['prize'])
+        
+        # Разделяем дату и время из поля start
+        start_parts = start_datetime.split(' ')
+        date = start_parts[0]  # Дата (Y-m-d)
+        start_time = start_parts[1] if len(start_parts) > 1 else '00:00'  # Время (H:i)
+        
+        # Сохраняем в базу данных событий
+        conn = sqlite3.connect('Database/events.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO events (type, name, description, date, long, price, prize, start)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (event_type, name, description, date, long_text, price, prize, start_time))
+
+        last_inserted_id = cursor.lastrowid
+        participants_table_name = f"event_{last_inserted_id}_participants"
+        
+        if event_type in ['ctf', 'sportprogramming']:
+            cursor.execute(f'''
+                CREATE TABLE {participants_table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL
+                )
+            ''')
+        elif event_type == 'gamejam':
+            cursor.execute(f'''
+                CREATE TABLE {participants_table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    task_0 INTEGER DEFAULT 0
+                )
+            ''')
+
+        conn.commit()
+        conn.close()
+            
+        return redirect(url_for('admin_content', event_id=last_inserted_id))
+    
+    return render_template('admin/admin_content.html')
+
 @app.route('/admin/content/<int:event_id>', methods=['GET', 'POST'])
 def admin_content(event_id):
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
+    
+    # Получаем информацию о событии
+    conn = sqlite3.connect('Database/events.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT type FROM events WHERE id = ?', (event_id,))
+    event_type = cursor.fetchone()[0]
+    conn.close()
+    
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
@@ -124,13 +186,41 @@ def admin_content(event_id):
                 test_cases.append(f"{input_data}|||{output_data}")
             i += 1
         
-        # Сохраняем в базу данных
+        # Сохраняем задачу в базу данных
         conn = sqlite3.connect('Database/tasks.db')
         cursor = conn.cursor()
         cursor.execute('''
             INSERT INTO tasks (event_id, name, description, test_cases)
             VALUES (?, ?, ?, ?)
         ''', (event_id, name, description, ';;;'.join(test_cases)))
+        
+        # Для CTF/SportProgramming обновляем таблицу участников
+        if event_type in ['ctf', 'sportprogramming']:
+            # Получаем текущее количество задач
+            conn_events = sqlite3.connect('Database/events.db')
+            cursor_events = conn_events.cursor()
+            
+            # Получаем список всех столбцов
+            cursor_events.execute(f"PRAGMA table_info(event_{event_id}_participants)")
+            columns = cursor_events.fetchall()
+            existing_tasks = [col[1] for col in columns if col[1].startswith('task_')]
+            
+            # Определяем следующий номер задачи
+            if existing_tasks:
+                last_task_num = max([int(task.split('_')[1]) for task in existing_tasks])
+                new_task_num = last_task_num + 1
+            else:
+                new_task_num = 0
+            
+            # Добавляем новый столбец
+            cursor_events.execute(f'''
+                ALTER TABLE event_{event_id}_participants
+                ADD COLUMN task_{new_task_num} INTEGER DEFAULT 0
+            ''')
+            
+            conn_events.commit()
+            conn_events.close()
+        
         conn.commit()
         conn.close()
         
@@ -145,7 +235,7 @@ def admin_content(event_id):
         test_cases = []
         if row[4]:  # Проверяем наличие test_cases
             for case in row[4].split(';;;'):
-                parts = case.split('|||', 1)  # Разделяем только по первому вхождению
+                parts = case.split('|||', 1)
                 input_data = parts[0] if len(parts) > 0 else ''
                 output_data = parts[1] if len(parts) > 1 else ''
                 test_cases.append({'input': input_data, 'output': output_data})
@@ -157,7 +247,24 @@ def admin_content(event_id):
         })
     conn.close()
     
-    return render_template('admin/task_content.html', event_id=event_id, tasks=tasks)
+    # Получаем количество задач из таблицы участников (для CTF/SportProgramming)
+    task_count = 0
+    if event_type in ['ctf', 'sportprogramming']:
+        conn = sqlite3.connect('Database/events.db')
+        cursor = conn.cursor()
+        try:
+            cursor.execute(f"PRAGMA table_info(event_{event_id}_participants)")
+            columns = cursor.fetchall()
+            task_count = len([col for col in columns if col[1].startswith('task_')])
+        except:
+            pass
+        conn.close()
+    
+    return render_template('admin/task_content.html', 
+                         event_id=event_id, 
+                         tasks=tasks,
+                         event_type=event_type,
+                         task_count=task_count)
 
 @app.route('/admin/content/<int:event_id>/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(event_id, task_id):
@@ -851,44 +958,6 @@ def backup_database():
         as_attachment=True,
         download_name=f'database_backup-{current_date}.zip'
     )
-
-# Маршрут для отображения формы добавления события
-@app.route('/admin/content', methods=['GET', 'POST'])
-def admin_content1():
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin_login'))
-    if request.method == 'POST':
-        # Получаем данные из формы
-        event_type = request.form['type']
-        name = request.form['name']
-        description = request.form['description']
-        date = request.form['date']
-        long_text = request.form['long']
-        price = int(request.form['price'])
-        prize = int(request.form['prize'])
-        start = request.form['start']
-        
-        # Сохраняем в базу данных
-        conn = sqlite3.connect('Database/events.db')
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            INSERT INTO events (type, name, description, date, long, price, prize,start)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (event_type, name, description, date, long_text, price, prize, start))
-
-        # Получаем ID последней вставленной записи
-        last_inserted_id = cursor.lastrowid
-
-        conn.commit()
-        conn.close()
-            
-        # Перенаправляем на страницу с ID события
-        return redirect(url_for('event_detail', id=last_inserted_id))
-    
-    # Если GET запрос, просто отображаем форму
-    return render_template('admin/admin_content.html')
-
 
 @app.errorhandler(404)
 def page_not_found(e):

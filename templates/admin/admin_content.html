@@ -10,7 +10,7 @@
     </div>
     
     <form method="POST" style="margin-left: 15%; margin-right: 15%;">
-        <div class="form-group-add" >
+        <div class="form-group-add">
             <label for="type" class="gold-text">Тип события:</label>
             <select id="type" name="type" class="form-control-add" required>
                 <option value="">-- Выберите тип --</option>
@@ -31,15 +31,9 @@
         </div>
         
         <div class="form-group-add">
-            <label for="date" class="gold-text">Дата:</label>
-            <input type="text" id="date" name="date" class="form-control-add" required>
+            <label for="start" class="gold-text">Начало:</label>
+            <input type="text" id="start" name="start" class="form-control-add" required>
         </div>
-        
-        <script>
-            $( function() {
-                $( "#date" ).datepicker();
-            } );
-        </script>
         
         <div class="form-group-add">
             <label for="long" class="gold-text">Длительность:</label>
@@ -59,16 +53,21 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         
-        <div class="form-group-add">
-            <label for="long" class="gold-text">Начало:</label>
-            <input type="text" id="start" name="start" class="form-control-add" required>
-        </div>
-        
         <script>
+            // Настройка для поля начала (дата и время)
+            flatpickr("#start", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                minDate: "today"
+            });
+            
+            // Настройка для поля длительности (только время)
             flatpickr("#long", {
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
+                time_24hr: true
             });
         </script>
         
