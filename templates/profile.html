@@ -12,6 +12,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -324,257 +326,474 @@
             box-shadow: 0 10px 25px -5px rgba(253, 230, 138, 0.4);
         }
 
-        .btn-gold {
-            background: var(--gold);
-            color: var(--black);
-            font-weight: 600;
-            transition: all 0.3s ease;
-            clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-        }
-
-        .btn-outline {
+        /* Achievement styles */
+        .achievement-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
             border: 2px solid var(--gold);
-            clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 215, 0, 0.1);
-        }
-
-        .card {
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
-            transition: all 0.3s ease;
-            border-left: 4px solid var(--gold);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .card:hover {
-            transform: translateY(-8px) !important;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-link {
             position: relative;
-            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
-        .nav-link:after {
-            content: '';
+        .achievement-badge:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .achievement-badge.locked {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        .achievement-badge .tooltip {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--gold);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover:after {
-            width: 100%;
-        }
-
-        .active-nav:after {
-            width: 100%;
-        }
-
-        .stat-card {
-            border-bottom: 4px solid var(--gold);
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
-            transform: scale(0.95);
-            transition: all 0.3s ease;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
             opacity: 0;
-            animation: fadeInScale 0.6s ease forwards;
+            transition: opacity 0.3s;
+            border: 1px solid var(--gold);
         }
 
-        .stat-card:hover {
-            transform: scale(1.05) !important;
+        .achievement-badge:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
         }
 
-        .tournament-card {
-            border-top: 4px solid var(--gold);
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .tournament-card:hover {
-            transform: translateY(-8px) !important;
-        }
-
-        .hexagon {
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            transition: all 0.3s ease;
-        }
-
-        .hexagon:hover {
-            transform: rotate(10deg) scale(1.1);
-        }
-
-        .section-title {
+        /* Radar chart container */
+        .chart-container {
             position: relative;
-            display: inline-block;
+            width: 100%;
+            height: 300px;
+            margin: 0 auto;
         }
 
-        .section-title:after {
-            content: '';
+        /* Trophy case styles */
+        .trophy-case {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        /* Progress bars */
+        .progress-container {
+            width: 100%;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            transition: width 0.5s ease;
+        }
+
+        /* Badge colors */
+        .badge-gold { background: linear-gradient(135deg, #FFD700, #D4AF37); }
+        .badge-silver { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+        .badge-bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); }
+        .badge-platinum { background: linear-gradient(135deg, #E5E4E2, #B8B8B8); }
+        .badge-diamond { background: linear-gradient(135deg, #b9f2ff, #7EC0EE); }
+
+        /* Medal ribbon */
+        .medal-ribbon {
             position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 50%;
-            height: 4px;
-            background-color: var(--gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.6s ease;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 30px;
+            background: red;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+            z-index: 2;
         }
 
-        .section-title.in-view:after {
-            transform: scaleX(1);
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-
-
     <!-- WebGL фон (опционально) -->
     <div id="webgl-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;"></div>
 
+    <!-- Плавающие формы для фона -->
+    <div class="shape-1 floating-shape"></div>
+    <div class="shape-2 floating-shape"></div>
+    <div class="shape-3 floating-shape"></div>
 
-    <div class="container mx-auto px-4 py-12 max-w-4xl relative">
-        <!-- Профиль пользователя -->
-        <div class="bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in">
-            <div class="flex flex-col items-center space-y-6">
-                <div class="relative">
-                    {% if user.photo_path %}
-                        <img src="{{ photo_path }}"
-                            alt="Фото профиля" 
-                            class="profile-image w-32 h-32 rounded-full object-cover border-4 border-yellow-400">
-                    {% else %}
-                        <div class="w-32 h-32 flex items-center justify-center rounded-full bg-gray-0 border-4 border-yellow-400">
-                            <i class="fas fa-user text-yellow-400 text-5xl"></i>
+    <div class="container mx-auto px-4 py-12 max-w-6xl relative">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Основной контент профиля -->
+            <div class="flex-1">
+                <!-- Профиль пользователя -->
+                <div class="bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                        <div class="relative">
+                            {% if user.photo_path %}
+                                <img src="{{ photo_path }}"
+                                    alt="Фото профиля" 
+                                    class="profile-image w-32 h-32 rounded-full object-cover border-4 border-yellow-400">
+                            {% else %}
+                                <div class="w-32 h-32 flex items-center justify-center rounded-full bg-gray-0 border-4 border-yellow-400">
+                                    <i class="fas fa-user text-yellow-400 text-5xl"></i>
+                                </div>
+                            {% endif %}
+                            <div class="absolute -bottom-2 -right-2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">
+                                {{ user.raiting }} ★
+                            </div>
                         </div>
-                    {% endif %}
-                    <div class="absolute -bottom-2 -right-2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">
-                        {{ user.raiting }} ★
+                        
+                        <div class="text-center md:text-left">
+                            <h1 class="text-3xl font-bold text-yellow-400">{{ user.username }}</h1>
+                            <p class="text-gray-400 mt-2">Зарегистрирован: {{ user.date }}</p>
+                            
+                            <!-- Отображаем дополнительные данные, если они есть -->
+                            <div class="mt-4 space-y-2">
+                                {% if user.Country %}
+                                <p class="text-gray-300"><span class="text-yellow-400">Страна:</span> {{ user.Country }}</p>
+                                {% endif %}
+                                
+                                {% if user.City %}
+                                <p class="text-gray-300"><span class="text-yellow-400">Город:</span> {{ user.City }}</p>
+                                {% endif %}
+                                
+                                {% if user.telegram %}
+                                <p class="text-gray-300">
+                                    <span class="text-yellow-400">Telegram:</span> 
+                                    <a href="https://t.me/{{ user.telegram }}" target="_blank" class="hover:text-yellow-400 transition-colors">
+                                        @{{ user.telegram }}
+                                    </a>
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="text-center">
-                    <h1 class="text-3xl font-bold text-yellow-400">{{ user.username }}</h1>
-                    <p class="text-gray-400 mt-2">Зарегистрирован: {{ user.date }}</p>
+
+                <!-- График решенных задач -->
+                <div class="mt-8 bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6">Прогресс по категориям</h2>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="text-yellow-400 font-bold text-lg" id="totalProblems">0</div>
+                            <div class="text-gray-400 text-sm">Всего решено</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-yellow-400 font-bold text-lg" id="hardestCategory">-</div>
+                            <div class="text-gray-400 text-sm">Сильная сторона</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-yellow-400 font-bold text-lg" id="weakestCategory">-</div>
+                            <div class="text-gray-400 text-sm">Слабая сторона</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-yellow-400 font-bold text-lg" id="completionRate">0%</div>
+                            <div class="text-gray-400 text-sm">Общий прогресс</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Статистика решений -->
+                <div class="mt-8 bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6">Статистика решений</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-yellow-300 mb-3">По сложности</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Легкие</span>
+                                        <span>25/50</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 50%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Средние</span>
+                                        <span>15/50</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Сложные</span>
+                                        <span>5/50</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-yellow-300 mb-3">По языкам</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Python</span>
+                                        <span>30 задач</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>C++</span>
+                                        <span>10 задач</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Java</span>
+                                        <span>5 задач</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if is_owner %}
+                <!-- Форма редактирования профиля -->
+                <div class="mt-8 bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in delay-100">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6 relative pb-2">
+                        Редактирование профиля
+                        <span class="absolute bottom-0 left-0 w-12 h-0.5 bg-yellow-400"></span>
+                    </h2>
                     
-                    <!-- Отображаем дополнительные данные, если они есть -->
-                    <div class="mt-4 space-y-2">
-                        {% if user.Country %}
-                        <p class="text-gray-300"><span class="text-yellow-400">Страна:</span> {{ user.Country }}</p>
-                        {% endif %}
+                    <form method="post" enctype="multipart/form-data" class="space-y-6" id="editProfileForm">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-yellow-400 mb-2">Имя пользователя</label>
+                            <input type="text" id="username" name="username" value="{{ user.username }}" required
+                                   class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
+                        </div>
                         
-                        {% if user.City %}
-                        <p class="text-gray-300"><span class="text-yellow-400">Город:</span> {{ user.City }}</p>
-                        {% endif %}
+                        <div>
+                            <label for="photo" class="block text-sm font-medium text-yellow-400 mb-2">Фото профиля</label>
+                            <input type="file" id="photo" name="photo" accept="image/*"
+                                   class="file-input w-full px-4 py-3 bg-gray-900/70 border-2 border-dashed border-yellow-400/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
+                        </div>
                         
-                        {% if user.telegram %}
-                        <p class="text-gray-300">
-                            <span class="text-yellow-400">Telegram:</span> 
-                            <a href="https://t.me/{{ user.telegram }}" target="_blank" class="hover:text-yellow-400 transition-colors">
-                                @{{ user.telegram }}
-                            </a>
-                        </p>
-                        {% endif %}
+                        <div>
+                            <label for="country" class="block text-sm font-medium text-yellow-400 mb-2">Страна</label>
+                            <input type="text" id="country" name="country" value="{{ user.Country if user.Country else '' }}"
+                                   class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
+                        </div>
+                        
+                        <div>
+                            <label for="city" class="block text-sm font-medium text-yellow-400 mb-2">Город</label>
+                            <input type="text" id="city" name="city" value="{{ user.City if user.City else '' }}"
+                                   class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
+                        </div>
+                        
+                        <div>
+                            <label for="telegram" class="block text-sm font-medium text-yellow-400 mb-2">Telegram</label>
+                            <input type="text" id="telegram" name="telegram" value="{{ user.telegram if user.telegram else '' }}"
+                                class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white"
+                                placeholder="Введите username без @ и ссылок">
+                            <div class="text-gray-400 text-xs mt-1 mb-2">Пожалуйста, вводите только username Telegram без символа @ и без ссылок,например: "username".</div>
+                            <div id="telegramError" class="text-red-500 text-sm mt-1 hidden">Пожалуйста, не используйте символы "@" и "http" в поле Telegram.</div>
+
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-yellow-400 text-black font-bold rounded-lg hover:bg-yellow-300 transition-colors duration-200 transform hover:-translate-y-1 shadow-lg hover:shadow-yellow-400/20">
+                                Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Боковая панель с достижениями -->
+            <div class="lg:w-80 space-y-8">
+                <!-- Панель достижений -->
+                <div class="bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6 flex items-center">
+                        <i class="fas fa-trophy mr-2"></i> Достижения
+                        <span class="ml-auto text-sm bg-yellow-400/20 text-yellow-400 px-3 py-1 rounded-full">
+                            8/24
+                        </span>
+                    </h2>
+                    
+                    <div class="trophy-case">
+                        <!-- Примеры достижений -->
+                        <div class="achievement-badge badge-gold" data-tooltip="Решено 10 задач">
+                            <i class="fas fa-code text-white text-xl"></i>
+                            <span class="tooltip">Новичок: Решено 10 задач</span>
+                        </div>
+                        
+                        <div class="achievement-badge badge-silver" data-tooltip="5 задач на бинарный поиск">
+                            <i class="fas fa-search text-white text-xl"></i>
+                            <span class="tooltip">Мастер бинарного поиска: 5 задач</span>
+                        </div>
+                        
+                        <div class="achievement-badge badge-bronze" data-tooltip="Первая задача на DP">
+                            <i class="fas fa-project-diagram text-white text-xl"></i>
+                            <span class="tooltip">Первая задача на ДП</span>
+                        </div>
+                        
+                        <div class="achievement-badge badge-platinum" data-tooltip="10 дней подряд">
+                            <i class="fas fa-fire text-white text-xl"></i>
+                            <span class="tooltip">Стрик: 10 дней подряд</span>
+                        </div>
+                        
+                        <div class="achievement-badge badge-diamond" data-tooltip="Топ 10% рейтинга">
+                            <i class="fas fa-crown text-white text-xl"></i>
+                            <span class="tooltip">Топ 10% рейтинга</span>
+                        </div>
+                        
+                        <div class="achievement-badge" data-tooltip="Первая задача">
+                            <i class="fas fa-star text-yellow-400 text-xl"></i>
+                            <span class="tooltip">Первая задача</span>
+                        </div>
+                        
+                        <div class="achievement-badge locked" data-tooltip="Заблокировано">
+                            <i class="fas fa-lock text-gray-400 text-xl"></i>
+                            <span class="tooltip">Решите 50 задач, чтобы разблокировать</span>
+                        </div>
+                        
+                        <div class="achievement-badge locked" data-tooltip="Заблокировано">
+                            <i class="fas fa-lock text-gray-400 text-xl"></i>
+                            <span class="tooltip">Решите 100 задач, чтобы разблокировать</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm font-semibold transition-colors">
+                            Показать все достижения <i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Последние активности -->
+                <div class="bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6 flex items-center">
+                        <i class="fas fa-history mr-2"></i> Активность
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-yellow-400/10 p-2 rounded-full mr-3">
+                                <i class="fas fa-check text-yellow-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Решена задача "Бинарный поиск"</p>
+                                <p class="text-xs text-gray-400">2 часа назад</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-400/10 p-2 rounded-full mr-3">
+                                <i class="fas fa-trophy text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Получено достижение "Новичок"</p>
+                                <p class="text-xs text-gray-400">Вчера</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-400/10 p-2 rounded-full mr-3">
+                                <i class="fas fa-level-up-alt text-green-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Повышен рейтинг до 1250</p>
+                                <p class="text-xs text-gray-400">3 дня назад</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-purple-400/10 p-2 rounded-full mr-3">
+                                <i class="fas fa-code text-purple-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Решена задача "Динамическое программирование"</p>
+                                <p class="text-xs text-gray-400">5 дней назад</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm font-semibold transition-colors">
+                            Вся активность <i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Рекомендации -->
+                <div class="bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-6 shadow-lg shadow-yellow-500/10 animate-fade-in">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6 flex items-center">
+                        <i class="fas fa-lightbulb mr-2"></i> Рекомендации
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-900/50 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="font-semibold text-yellow-300 mb-1">Графы</h3>
+                            <p class="text-sm text-gray-300">Попробуйте решить задачи на обход графов, чтобы улучшить свои навыки.</p>
+                            <a href="#" class="text-yellow-400 hover:text-yellow-300 text-xs font-semibold mt-2 inline-block">Показать задачи →</a>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-900/50 rounded-lg border-l-4 border-blue-400">
+                            <h3 class="font-semibold text-blue-300 mb-1">Соревнование</h3>
+                            <p class="text-sm text-gray-300">Примите участие в ближайшем соревновании, чтобы поднять рейтинг.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-xs font-semibold mt-2 inline-block">Подробнее →</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        
-        {% if is_owner %}
-        <div class="mt-8 bg-black/80 backdrop-blur-sm rounded-2xl border border-yellow-400/20 p-8 shadow-lg shadow-yellow-500/10 animate-fade-in delay-100">
-            <h2 class="text-2xl font-bold text-yellow-400 mb-6 relative pb-2">
-                Редактирование профиля
-                <span class="absolute bottom-0 left-0 w-12 h-0.5 bg-yellow-400"></span>
-            </h2>
-            
-            <form method="post" enctype="multipart/form-data" class="space-y-6" id="editProfileForm">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-yellow-400 mb-2">Имя пользователя</label>
-                    <input type="text" id="username" name="username" value="{{ user.username }}" required
-                           class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
-                </div>
-                
-                <div>
-                    <label for="photo" class="block text-sm font-medium text-yellow-400 mb-2">Фото профиля</label>
-                    <input type="file" id="photo" name="photo" accept="image/*"
-                           class="file-input w-full px-4 py-3 bg-gray-900/70 border-2 border-dashed border-yellow-400/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
-                </div>
-                
-                <div>
-                    <label for="country" class="block text-sm font-medium text-yellow-400 mb-2">Страна</label>
-                    <input type="text" id="country" name="country" value="{{ user.Country if user.Country else '' }}"
-                           class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
-                </div>
-                
-                <div>
-                    <label for="city" class="block text-sm font-medium text-yellow-400 mb-2">Город</label>
-                    <input type="text" id="city" name="city" value="{{ user.City if user.City else '' }}"
-                           class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white">
-                </div>
-                
-                <div>
-                    <label for="telegram" class="block text-sm font-medium text-yellow-400 mb-2">Telegram</label>
-                    <input type="text" id="telegram" name="telegram" value="{{ user.telegram if user.telegram else '' }}"
-                        class="w-full px-4 py-3 bg-gray-900/70 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white"
-                        placeholder="Введите username без @ и ссылок">
-                    <div class="text-gray-400 text-xs mt-1 mb-2">Пожалуйста, вводите только username Telegram без символа @ и без ссылок,например: "username".</div>
-                    <div id="telegramError" class="text-red-500 text-sm mt-1 hidden">Пожалуйста, не используйте символы "@" и "http" в поле Telegram.</div>
-
-                    <button type="submit" 
-                            class="px-6 py-3 bg-yellow-400 text-black font-bold rounded-lg hover:bg-yellow-300 transition-colors duration-200 transform hover:-translate-y-1 shadow-lg hover:shadow-yellow-400/20">
-                        Сохранить изменения
-                    </button>
-
-                    <script>
-                    document.querySelector('form').addEventListener('submit', function(e) {
-                        const telegramInput = document.getElementById('telegram');
-                        const telegramError = document.getElementById('telegramError');
-                        const value = telegramInput.value;
-                        
-                        if (value.includes('@') || value.includes('http') || value.includes('t.me')) {
-                            e.preventDefault();
-                            telegramError.classList.remove('hidden');
-                            telegramInput.classList.add('border-red-500');
-                            telegramInput.focus();
-                        } else {
-                            telegramError.classList.add('hidden');
-                            telegramInput.classList.remove('border-red-500');
-                        }
-                    });
-
-                    // Также можно добавить валидацию при вводе
-                    document.getElementById('telegram').addEventListener('input', function() {
-                        const telegramError = document.getElementById('telegramError');
-                        const value = this.value;
-                        
-                        if (value.includes('@') || value.includes('https://') || value.includes('t.me')) {
-                            telegramError.classList.remove('hidden');
-                            this.classList.add('border-red-500');
-                        } else {
-                            telegramError.classList.add('hidden');
-                            this.classList.remove('border-red-500');
-                        }
-                    });
-                    </script>
-            </form>
         </div>
-        {% endif %}
     </div>
-    <br><br><br><br><br><br>
+
     <script>
         // Инициализация Three.js для анимированного фона
         function initWebGLBackground() {
@@ -636,10 +855,145 @@
             });
         }
         
+        // Инициализация радар-чарта
+        function initSkillsChart() {
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            
+            // Данные для графика (примерные)
+            const data = {
+                labels: [
+                    'Бинарный поиск',
+                    'ДП',
+                    'Геометрия',
+                    'Графы',
+                    'Деревья',
+                    'Математика',
+                    'Матрицы'
+                ],
+                datasets: [{
+                    label: 'Уровень навыков',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    fill: true,
+                    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                    borderColor: 'rgb(255, 215, 0)',
+                    pointBackgroundColor: 'rgb(255, 215, 0)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(255, 215, 0)'
+                }]
+            };
+            
+            const config = {
+                type: 'radar',
+                data: data,
+                options: {
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#fff',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const skillsChart = new Chart(ctx, config);
+            
+            // Обновляем статистику
+            updateStats(data);
+        }
+        
+        // Обновление статистики на основе данных графика
+        function updateStats(chartData) {
+            const data = chartData.datasets[0].data;
+            const labels = chartData.labels;
+            
+            // Общее количество решенных задач (примерное)
+            const total = data.reduce((a, b) => a + b, 0);
+            document.getElementById('totalProblems').textContent = total;
+            
+            // Процент завершения (примерный)
+            const completionRate = Math.round((total / (100 * data.length)) * 100);
+            document.getElementById('completionRate').textContent = completionRate + '%';
+            
+            // Самая сильная категория
+            const maxValue = Math.max(...data);
+            const strongestIndex = data.indexOf(maxValue);
+            document.getElementById('hardestCategory').textContent = labels[strongestIndex];
+            
+            // Самая слабая категория
+            const minValue = Math.min(...data);
+            const weakestIndex = data.indexOf(minValue);
+            document.getElementById('weakestCategory').textContent = labels[weakestIndex];
+        }
+        
+        // Создание частиц для фона
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Случайные параметры
+                const size = Math.random() * 5 + 1;
+                const posX = Math.random() * window.innerWidth;
+                const duration = Math.random() * 10 + 5;
+                const delay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}px`;
+                particle.style.bottom = `-10px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                document.body.appendChild(particle);
+            }
+        }
+        
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             // Запускаем WebGL фон
             initWebGLBackground();
+            
+            // Инициализируем график навыков
+            initSkillsChart();
+            
+            // Создаем частицы
+            createParticles();
             
             // Анимация элементов интерфейса
             gsap.from('.animate-fade-in', {
@@ -668,62 +1022,47 @@
                     duration: 3,
                     ease: "power2.out"
                 });
+                
+                // Обновляем позицию spotlight эффекта
+                document.documentElement.style.setProperty('--x', `${e.clientX}px`);
+                document.documentElement.style.setProperty('--y', `${e.clientY}px`);
             });
 
-
-            // Создание частиц
-            function createParticles() {
-                const particleCount = 30;
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Случайные параметры
-                    const size = Math.random() * 5 + 1;
-                    const posX = Math.random() * window.innerWidth;
-                    const duration = Math.random() * 10 + 5;
-                    const delay = Math.random() * 5;
-                    
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${posX}px`;
-                    particle.style.bottom = `-10px`;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${delay}s`;
-                    
-                    document.body.appendChild(particle);
-                }
-            }
-            
-            createParticles();
-
-            // Обработчик для кнопки закрытия (если нужно)
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    // Ваш код для закрытия
-                });
-            }
-
+            // Валидация Telegram поля
             document.querySelector('#telegram').addEventListener('input', function() {
                 const value = this.value;
-                if (value.includes('@') || value.includes('http')) {
-                    document.querySelector('#telegramError').classList.remove('hidden');
+                const telegramError = document.querySelector('#telegramError');
+                
+                if (value.includes('@') || value.includes('http') || value.includes('t.me')) {
+                    telegramError.classList.remove('hidden');
+                    this.classList.add('border-red-500');
                 } else {
-                    document.querySelector('#telegramError').classList.add('hidden');
+                    telegramError.classList.add('hidden');
+                    this.classList.remove('border-red-500');
                 }
             });
 
             document.querySelector('#editProfileForm').addEventListener('submit', function(event) {
                 const telegramValue = document.querySelector('#telegram').value;
-                if (telegramValue.includes('@') || telegramValue.includes('http')) {
+                const telegramError = document.querySelector('#telegramError');
+                
+                if (telegramValue.includes('@') || telegramValue.includes('http') || telegramValue.includes('t.me')) {
                     event.preventDefault();
-                    document.querySelector('#telegramError').classList.remove('hidden');
+                    telegramError.classList.remove('hidden');
+                    document.querySelector('#telegram').classList.add('border-red-500');
                 }
             });
 
-            // Particles.js initialization with more visible particles
-            particlesJS.load('particles-js', '/static/particles.json', function() {
-                console.log('callback - particles.js config loaded');
+            // Анимация для достижений
+            const achievements = document.querySelectorAll('.achievement-badge:not(.locked)');
+            achievements.forEach((achievement, index) => {
+                gsap.from(achievement, {
+                    scale: 0,
+                    rotation: 180,
+                    duration: 0.6,
+                    delay: index * 0.1,
+                    ease: "back.out(1.7)"
+                });
             });
         });
     </script>
